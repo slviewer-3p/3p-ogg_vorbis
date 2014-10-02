@@ -26,6 +26,10 @@ eval "$("$AUTOBUILD" source_environment)"
 top="$(pwd)"
 stage="$(pwd)/stage"
 
+
+build=${AUTOBUILD_BUILD_ID:=0}
+echo "${OGG_VERSION}-${VORBIS_VERSION}.${build}" > "${stage}/VERSION.txt"
+
 case "$AUTOBUILD_PLATFORM" in
     "windows")
         pushd "$OGG_SOURCE_DIR"
