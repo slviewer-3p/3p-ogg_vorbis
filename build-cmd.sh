@@ -19,10 +19,11 @@ else
     autobuild="$AUTOBUILD"
 fi
 
-OGG_VERSION=1.2.2
-OGG_SOURCE_DIR="libogg-$OGG_VERSION"
-VORBIS_VERSION=1.3.2
-VORBIS_SOURCE_DIR=libvorbis-$VORBIS_VERSION
+OGG_SOURCE_DIR="libogg"
+OGG_VERSION="$(sed -n 's/^ VERSION=(.*)$/\1/p' "$OGG_SOURCE_DIR/configure")"
+
+VORBIS_SOURCE_DIR="libvorbis"
+VORBIS_VERSION="$(sed -n "s/^PACKAGE_VERSION='(.*)'/\1/p" "$VORBIS_SOURCE_DIR/configure")"
 
 # load autbuild provided shell functions and variables
 eval "$("$autobuild" source_environment)"
@@ -40,36 +41,34 @@ case "$AUTOBUILD_PLATFORM" in
     windows*)
         pushd "$OGG_SOURCE_DIR"
 
-        packages="$(cygpath -m "$stage/packages")"
-
         build_sln "win32/ogg.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "ogg_static"
 
         mkdir -p "$stage/lib/release"
-        cp "win32/Static_Release/ogg_static.lib" "$stage/lib/release/ogg_static.lib"
-        cp "win32/Static_Release/vc120.pdb" "$stage/lib/release/ogg_static.pdb"
+        cp "win32/Static_Release/ogg_static.lib" "$stage/lib/release/"
+        cp "win32/Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/ogg_static.pdb"
 
         mkdir -p "$stage/include"
         cp -a "include/ogg/" "$stage/include/"
-        
+
         popd
         pushd "$VORBIS_SOURCE_DIR"
-        
+
         build_sln "win32/vorbis.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "vorbis_static"
         build_sln "win32/vorbis.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "vorbisenc_static"
         build_sln "win32/vorbis.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "vorbisfile_static"
-        
-        cp "win32/Vorbis_Static_Release/vorbis_static.lib" "$stage/lib/release/vorbis_static.lib"
-        cp "win32/Vorbis_Static_Release/vc120.pdb" "$stage/lib/release/vorbis_static.pdb"
-        cp "win32/VorbisEnc_Static_Release/vorbisenc_static.lib" "$stage/lib/release/vorbisenc_static.lib"
-        cp "win32/VorbisEnc_Static_Release/vc120.pdb" "$stage/lib/release/vorbis_static.pdb"
-        cp "win32/VorbisFile_Static_Release/vorbisfile_static.lib" "$stage/lib/release/vorbisfile_static.lib"
-        cp "win32/VorbisFile_Static_Release/vc120.pdb" "$stage/lib/release/vorbis_static.pdb"
+
+        cp "win32/Vorbis_Static_Release/vorbis_static.lib" "$stage/lib/release/"
+        cp "win32/Vorbis_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbis_static.pdb"
+        cp "win32/VorbisEnc_Static_Release/vorbisenc_static.lib" "$stage/lib/release/"
+        cp "win32/VorbisEnc_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbisenc_static.pdb"
+        cp "win32/VorbisFile_Static_Release/vorbisfile_static.lib" "$stage/lib/release/"
+        cp "win32/VorbisFile_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbisfile_static.pdb"
         cp -a "include/vorbis/" "$stage/include/"
         popd
     ;;
-    "darwin")
+    darwin*)
         pushd "$OGG_SOURCE_DIR"
-        opts="-arch i386 -iwithsysroot /Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.7"
+        opts="-arch $AUTOBUILD_CONFIGURE_ARCH $LL_BUILD"
         export CFLAGS="$opts" 
         export CPPFLAGS="$opts" 
         export LDFLAGS="$opts"
@@ -88,16 +87,17 @@ case "$AUTOBUILD_PLATFORM" in
         mkdir -p "$stage/lib"
         mv "$stage/release" "$stage/lib"
      ;;
-    "linux")
+    linux*)
         pushd "$OGG_SOURCE_DIR"
-        CFLAGS="-m32" CXXFLAGS="-m32" ./configure --prefix="$stage"
+        opts="-m$AUTOBUILD_ADDRSIZE $LL_BUILD"
+        CFLAGS="$opts" CXXFLAGS="$opts" ./configure --prefix="$stage"
         make
         make install
         popd
         
         pushd "$VORBIS_SOURCE_DIR"
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$stage/lib"
-        CFLAGS="-m32" CXXFLAGS="-m32" ./configure --prefix="$stage"
+        CFLAGS="$opts" CXXFLAGS="$opts" ./configure --prefix="$stage"
         make
         make install
         popd
