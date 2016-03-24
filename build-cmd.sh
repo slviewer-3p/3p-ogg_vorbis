@@ -6,13 +6,17 @@ cd "$(dirname "$0")"
 set -x
 # make errors fatal
 set -e
+# complain about unset env variables
+set -u
 
 if [ -z "$AUTOBUILD" ] ; then 
     fail
 fi
 
 if [ "$OSTYPE" = "cygwin" ] ; then
-    export AUTOBUILD="$(cygpath -u $AUTOBUILD)"
+    autobuild="$(cygpath -u $AUTOBUILD)"
+else
+    autobuild="$AUTOBUILD"
 fi
 
 OGG_VERSION=1.2.2
@@ -21,7 +25,10 @@ VORBIS_VERSION=1.3.2
 VORBIS_SOURCE_DIR=libvorbis-$VORBIS_VERSION
 
 # load autbuild provided shell functions and variables
-eval "$("$AUTOBUILD" source_environment)"
+eval "$("$autobuild" source_environment)"
+
+# set LL_BUILD and friends
+set_build_variables convenience Release
 
 top="$(pwd)"
 stage="$(pwd)/stage"
