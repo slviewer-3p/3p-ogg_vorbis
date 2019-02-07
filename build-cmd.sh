@@ -38,13 +38,26 @@ echo "${OGG_VERSION}-${VORBIS_VERSION}.${build}" > "${stage}/VERSION.txt"
 
 case "$AUTOBUILD_PLATFORM" in
     windows*)
+        function copy_result {
+            # $1 is the build directory in which to find the result
+            # $2 is the basename of the .lib file we expect to find there
+            cp "win32/$1/$2.lib" "$stage/lib/release/"
+            # This is odd, but empirically even VS 2017 (aka vc150) produces a
+            # vc120.pdb file into $1. Since the string "vc120" isn't obviously
+            # embedded in either the .sln file or the various .vcxproj files,
+            # we didn't dig further to try to figure out how to change it
+            # there. (If we were going to change it there, we'd want to change
+            # it to match the .lib name itself, instead of having to rename it
+            # in this copy command.)
+            cp "win32/$1/vc120.pdb" "$stage/lib/release/$2.pdb"
+        }
+
         pushd "$OGG_SOURCE_DIR"
 
         build_sln "win32/ogg.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "ogg_static"
 
         mkdir -p "$stage/lib/release"
-        cp "win32/Static_Release/ogg_static.lib" "$stage/lib/release/"
-        cp "win32/Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/ogg_static.pdb"
+        copy_result Static_Release ogg_static
 
         mkdir -p "$stage/include"
         cp -a "include/ogg/" "$stage/include/"
@@ -56,12 +69,9 @@ case "$AUTOBUILD_PLATFORM" in
         build_sln "win32/vorbis.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "vorbisenc_static"
         build_sln "win32/vorbis.sln" "Release|$AUTOBUILD_WIN_VSPLATFORM" "vorbisfile_static"
 
-        cp "win32/Vorbis_Static_Release/vorbis_static.lib" "$stage/lib/release/"
-        cp "win32/Vorbis_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbis_static.pdb"
-        cp "win32/VorbisEnc_Static_Release/vorbisenc_static.lib" "$stage/lib/release/"
-        cp "win32/VorbisEnc_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbisenc_static.pdb"
-        cp "win32/VorbisFile_Static_Release/vorbisfile_static.lib" "$stage/lib/release/"
-        cp "win32/VorbisFile_Static_Release/vc$AUTOBUILD_VSVER.pdb" "$stage/lib/release/vorbisfile_static.pdb"
+        copy_result Vorbis_Static_Release     vorbis_static
+        copy_result VorbisEnc_Static_Release  vorbisenc_static
+        copy_result VorbisFile_Static_Release vorbisfile_static
         cp -a "include/vorbis/" "$stage/include/"
         popd
     ;;
