@@ -133,9 +133,9 @@ else
 	case $host in
 	*86-*-linux*)
 		DEBUG="-g -Wall -Wextra -D_REENTRANT -D__NO_MATH_INLINES -fsigned-char"
-		CFLAGS="-O3 -Wall -Wextra -ffast-math -mno-ieee-fp -D_REENTRANT -fsigned-char"
-#              	PROFILE="-Wall -Wextra -pg -g -O3 -ffast-math -D_REENTRANT -fsigned-char -fno-inline -static"
-		PROFILE="-Wall -Wextra -pg -g -O3 -ffast-math -mno-ieee-fp -D_REENTRANT -fsigned-char -fno-inline"
+		CFLAGS="-O3 -Wall -Wextra  -mno-ieee-fp -D_REENTRANT -fsigned-char"
+#              	PROFILE="-Wall -Wextra -pg -g -O3  -D_REENTRANT -fsigned-char -fno-inline -static"
+		PROFILE="-Wall -Wextra -pg -g -O3  -mno-ieee-fp -D_REENTRANT -fsigned-char -fno-inline"
 
 		# glibc < 2.1.3 has a serious FP bug in the math inline header
 		# that will cripple Vorbis.  Look to see if the magic FP stack
@@ -178,16 +178,16 @@ else
   		fi;;
         powerpc-*-linux*spe)
  	        DEBUG="-g -Wall -Wextra -D_REENTRANT -D__NO_MATH_INLINES"
- 	        CFLAGS="-O3 -Wall -Wextra -ffast-math -mfused-madd -D_REENTRANT"
- 	        PROFILE="-pg -g -O3 -ffast-math -mfused-madd -D_REENTRANT";;
+ 	        CFLAGS="-O3 -Wall -Wextra  -mfused-madd -D_REENTRANT"
+ 	        PROFILE="-pg -g -O3  -mfused-madd -D_REENTRANT";;
 	powerpc-*-linux*)
 		DEBUG="-g -Wall -Wextra -D_REENTRANT -D__NO_MATH_INLINES"
-		CFLAGS="-O3 -Wall -Wextra -ffast-math -mfused-madd -mcpu=750 -D_REENTRANT"
-		PROFILE="-pg -g -O3 -ffast-math -mfused-madd -mcpu=750 -D_REENTRANT";;
+		CFLAGS="-O3 -Wall -Wextra  -mfused-madd -mcpu=750 -D_REENTRANT"
+		PROFILE="-pg -g -O3  -mfused-madd -mcpu=750 -D_REENTRANT";;
 	*-*-linux*)
 		DEBUG="-g -Wall -Wextra -D_REENTRANT -D__NO_MATH_INLINES -fsigned-char"
-		CFLAGS="-O3 -Wall -Wextra -ffast-math -D_REENTRANT -fsigned-char"
-		PROFILE="-pg -g -O3 -ffast-math -D_REENTRANT -fsigned-char";;
+		CFLAGS="-O3 -Wall -Wextra  -D_REENTRANT -fsigned-char"
+		PROFILE="-pg -g -O3  -D_REENTRANT -fsigned-char";;
 	sparc-sun-*)
 		sparc_cpu=""
 		AC_MSG_CHECKING([if gcc supports -mv8])
@@ -199,17 +199,17 @@ else
 		])
 		CFLAGS="$old_cflags"
 		DEBUG="-g -Wall -Wextra -D__NO_MATH_INLINES -fsigned-char $sparc_cpu"
-		CFLAGS="-O3 -Wall -Wextra -ffast-math -D__NO_MATH_INLINES -fsigned-char $sparc_cpu"
+		CFLAGS="-O3 -Wall -Wextra  -D__NO_MATH_INLINES -fsigned-char $sparc_cpu"
 		PROFILE="-pg -g -O3 -D__NO_MATH_INLINES -fsigned-char $sparc_cpu" ;;
 	*-*-darwin*)
 		DEBUG="-DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -O0 -fsigned-char"
-		CFLAGS="-DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -O3 -ffast-math -fsigned-char"
-		PROFILE="-DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -pg -O3 -ffast-math -fsigned-char";;
+		CFLAGS="-DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -O3  -fsigned-char"
+		PROFILE="-DDARWIN -fno-common -force_cpusubtype_ALL -Wall -g -pg -O3  -fsigned-char";;
 	*-*-os2*)
 		# Use -W instead of -Wextra because gcc on OS/2 is an old version.
 		DEBUG="-g -Wall -W -D_REENTRANT -D__NO_MATH_INLINES -fsigned-char"
-		CFLAGS="-O3 -Wall -W -ffast-math -D_REENTRANT -fsigned-char"
-		PROFILE="-pg -g -O3 -ffast-math -D_REENTRANT -fsigned-char";;
+		CFLAGS="-O3 -Wall -W  -D_REENTRANT -fsigned-char"
+		PROFILE="-pg -g -O3  -D_REENTRANT -fsigned-char";;
  	*)
 		DEBUG="-g -Wall -Wextra -D__NO_MATH_INLINES -fsigned-char"
 		CFLAGS="-O3 -Wall -Wextra -D__NO_MATH_INLINES -fsigned-char"
