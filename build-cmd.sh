@@ -99,7 +99,7 @@ case "$AUTOBUILD_PLATFORM" in
     linux*)
         pushd "$OGG_SOURCE_DIR"
         opts="-m$AUTOBUILD_ADDRSIZE $LL_BUILD_RELEASE"
-	autoreconf
+		autoreconf -fi
         CFLAGS="$opts" CXXFLAGS="$opts" ./configure --prefix="$stage"
         make
         make install
@@ -107,7 +107,7 @@ case "$AUTOBUILD_PLATFORM" in
         
         pushd "$VORBIS_SOURCE_DIR"
         export LD_LIBRARY_PATH="$stage/lib"
-	autoreconf
+		autoreconf -fi
         CFLAGS="$opts" CXXFLAGS="$opts" ./configure --prefix="$stage"
         make
         make install
