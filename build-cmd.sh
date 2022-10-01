@@ -98,7 +98,7 @@ case "$AUTOBUILD_PLATFORM" in
      ;;
     linux*)
         pushd "$OGG_SOURCE_DIR"
-        opts="-m$AUTOBUILD_ADDRSIZE $LL_BUILD_RELEASE"
+        opts="${AUTOBUILD_GCC_ARCH} $LL_BUILD_RELEASE"
 		autoreconf -fi
         CFLAGS="$opts" CXXFLAGS="$opts" ./configure --prefix="$stage"
         make
